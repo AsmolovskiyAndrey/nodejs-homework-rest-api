@@ -1,14 +1,51 @@
-// const fs = require('fs/promises')
+const fs = require("fs").promises;
+const path = require("path");
+const uniqid = require("uniqid");
 
-const listContacts = async () => {}
+const contactsPath = path.resolve("./models/contacts.json");
 
-const getContactById = async (contactId) => {}
+const listContacts = async (req, res, next) => {
+  try {
+    const contacts = JSON.parse(await fs.readFile(contactsPath));
+    res.status(200).json({ contacts });
+  } catch (err) {
+    const error = new Error("List no finded...");
+    error.status = 404;
+    next(error);
+  }
+};
 
-const removeContact = async (contactId) => {}
+const getContactById = async (req, res, next) => {
+  const userId = req.params.contactId;
+  const data = JSON.parse(await fs.readFile(contactsPath));
 
-const addContact = async (body) => {}
+  const [postById] = data.filter((item) => item.id === userId);
+  console.log(postById);
 
-const updateContact = async (contactId, body) => {}
+  if (!postById) {
+    const error = new Error("Id not found");
+    error.status = 404;
+    return next(error);
+  }
+  res.json({ postById });
+};
+
+const addContact = async (req, res, next) => {
+  const { name, email, phone } = req.body;
+  const newContact = {
+    id: uniqid(),
+    name,
+    email,
+    phone,
+  };
+  const data = JSON.parse(await fs.readFile(contactsPath));
+  const newData = [...data, newContact];
+  await fs.writeFile(contactsPath, JSON.stringify(newData));
+};
+
+const updateContact = async (contactId, body) => {};
+
+const removeContact = async (contactId) => {};
 
 module.exports = {
   listContacts,
@@ -16,4 +53,4 @@ module.exports = {
   removeContact,
   addContact,
   updateContact,
-}
+};
