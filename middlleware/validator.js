@@ -1,6 +1,6 @@
 const Joi = require("joi");
 
-const addPostValidation = (req, res, next) => {
+const addValidation = (req, res, next) => {
   const schema = Joi.object({
     name: Joi.string().min(3).max(30).hostname().required(),
     email: Joi.string().min(3).max(30).email().required(),
@@ -14,10 +14,11 @@ const addPostValidation = (req, res, next) => {
   next();
 };
 
-const patchPostValidation = (req, res, next) => {
+const putValidation = (req, res, next) => {
   const schema = Joi.object({
-    topic: Joi.string().min(3).max(30).optional(),
-    text: Joi.string().min(10).max(500).optional(),
+    name: Joi.string().min(3).max(30).hostname().optional(),
+    email: Joi.string().min(3).max(30).email().optional(),
+    phone: Joi.string().min(3).max(30).optional(),
   });
 
   const validationResult = schema.validate(req.body);
@@ -27,4 +28,4 @@ const patchPostValidation = (req, res, next) => {
   next();
 };
 
-module.exports = { addPostValidation, patchPostValidation };
+module.exports = { addValidation, putValidation };
