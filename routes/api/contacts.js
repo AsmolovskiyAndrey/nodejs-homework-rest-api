@@ -8,6 +8,7 @@ const {
   addContact,
   updateContact,
 } = require("../../models/contacts");
+
 const { addValidation, putValidation } = require("../../middlleware/validator");
 
 router.get("/", listContacts);

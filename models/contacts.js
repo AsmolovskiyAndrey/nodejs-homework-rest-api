@@ -19,14 +19,14 @@ const getContactById = async (req, res, next) => {
   const userId = req.params.contactId;
   const data = JSON.parse(await fs.readFile(contactsPath));
 
-  const [postById] = data.filter((item) => item.id === userId);
+  const [contactById] = data.filter((item) => item.id === userId);
 
-  if (!postById) {
+  if (!contactById) {
     const error = new Error("Id not found");
     error.status = 404;
     return next(error);
   }
-  res.json({ postById });
+  res.json({ contactById });
 };
 
 const addContact = async (req, res) => {
@@ -58,7 +58,31 @@ const removeContact = async (req, res, next) => {
   next(error);
 };
 
-const updateContact = async (contactId, body) => {};
+const updateContact = async (req, res, next) => {
+  const { name, email, phone } = req.body;
+  const userId = req.params.contactId;
+
+  if (name || email || phone) {
+    const data = JSON.parse(await fs.readFile(contactsPath));
+    const isIdOk = data.find((item) => item.id === userId);
+    if (isIdOk) {
+      const updateContact = data.find((item) => item.id === userId);
+      if (name) updateContact.name = name;
+      if (email) updateContact.email = email;
+      if (phone) updateContact.phone = phone;
+      const newData = [...data, updateContact];
+      await fs.writeFile(contactsPath, JSON.stringify(newData));
+      res.status(200).json({ updateContact });
+      return;
+    }
+    const error = new Error("Contact not finded...");
+    error.status = 404;
+    next(error);
+  }
+  const error = new Error("Must be name oder email oder phone for change");
+  error.status = 404;
+  next(error);
+};
 
 module.exports = {
   listContacts,
