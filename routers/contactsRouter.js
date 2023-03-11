@@ -1,15 +1,18 @@
 const express = require("express");
-
 const router = express.Router();
+
+const { addPostValidation } = require("../middlleware/validator");
+const { asyncWrapper } = require("../helpers/apiHelpers");
+
 const {
   listContacts,
   getContactById,
   removeContact,
   addContact,
   updateContact,
-} = require("../../models/contacts");
+} = require("../models/contacts");
 
-const { addValidation, putValidation } = require("../../middlleware/validator");
+const { addValidation, putValidation } = require("../middlleware/validator");
 
 router.get("/", listContacts);
 
