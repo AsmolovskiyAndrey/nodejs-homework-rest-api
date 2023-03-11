@@ -1,5 +1,5 @@
 const { Contacts } = require("../db/contactModel");
-const { WrongParametrError } = require("../helpers/errors");
+const { ValidationError } = require("../helpers/errors");
 
 const getContacts = async () => {
   const contacts = await Contacts.find({})
@@ -13,7 +13,7 @@ const getContactById = async (id) => {
   const contact = await Contacts.findById(id);
 
   if (!contact) {
-    throw new WrongParametrError(`No contact with id ${id}`);
+    throw new ValidationError(`No contact with id ${id}`);
   }
   return contact;
 };
@@ -30,9 +30,7 @@ const changeContactById = async (id, { name, email, phone }) => {
 const deleteContactById = async (id) => {
   const contact = await Contacts.findById(id);
   if (!contact) {
-    throw new WrongParametrError(
-      `Delete imposibble - No contact with id ${id}`
-    );
+    throw new ValidationError(`Delete imposibble - No contact with id ${id}`);
   }
 
   await Contacts.findByIdAndRemove(id);
@@ -41,7 +39,7 @@ const deleteContactById = async (id) => {
 const updateStatusContact = async (id, { favorite }) => {
   const contact = await Contacts.findById(id);
   if (!contact) {
-    throw new WrongParametrError(
+    throw new ValidationError(
       `Update Status imposibble - No contact with id ${id}`
     );
   }
