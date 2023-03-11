@@ -3,7 +3,10 @@ const { Contacts } = require("../db/contactModel");
 const { WrongParametrError } = require("../helpers/errors");
 
 const getContacts = async () => {
-  const contacts = await Contacts.find({});
+  const contacts = await Contacts.find({})
+    .sort({ createdAt: -1 })
+    .select("-__v")
+    .lean();
   return contacts;
 };
 
@@ -16,13 +19,13 @@ const getContactById = async (id) => {
   return contact;
 };
 
-const addContact = async ({ topic, text }) => {
-  const addContact = new Contacts({ topic, text });
+const addContact = async ({ name, email, phone }) => {
+  const addContact = new Contacts({ name, email, phone });
   await addContact.save();
 };
 
-const changeContactById = async (id, { topic, text }) => {
-  await Contacts.findByIdAndUpdate(id, { $set: { topic, text } });
+const changeContactById = async (id, { name, email, phone }) => {
+  await Contacts.findByIdAndUpdate(id, { $set: { name, email, phone } });
 };
 
 const deleteContactById = async (id) => {

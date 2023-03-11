@@ -12,29 +12,29 @@ const getContactsController = async (req, res) => {
 };
 
 const getContactByIdController = async (req, res) => {
-  const id = req.params.id;
-  const post = await getContactById(id);
-  res.json({ post, status: "success find" });
+  const id = req.params.contactId;
+  const contactById = await getContactById(id);
+  res.json({ contactById });
 };
 
 const addContactController = async (req, res) => {
-  const { topic, text } = req.body;
-  await addContact({ topic, text });
-  res.json({ status: "success add" });
+  const { name, email, phone } = req.body;
+  await addContact({ name, email, phone });
+  res.json({ status: "contact added" });
 };
 
 const changeContactController = async (req, res) => {
-  const { topic, text } = req.body;
-  const id = req.params.id;
-  await changeContactById(id, { topic, text });
+  const { name, email, phone } = req.body;
+  const id = req.params.contactId;
+  await changeContactById(id, { name, email, phone });
 
-  res.json({ status: "success change" });
+  res.json({ status: "contact changed" });
 };
 
 const deleteContactController = async (req, res) => {
-  const id = req.params.id;
+  const id = req.params.contactId;
   await deleteContactById(id);
-  res.json({ status: "deleted" });
+  res.json({ status: "contact deleted" });
 };
 
 module.exports = {

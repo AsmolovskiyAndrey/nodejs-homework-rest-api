@@ -16,7 +16,7 @@ const addValidation = (req, res, next) => {
 
 const putValidation = (req, res, next) => {
   const schema = Joi.object({
-    name: Joi.string().min(3).max(30).hostname().optional(),
+    name: Joi.string().min(3).max(30).optional(),
     email: Joi.string().min(3).max(30).email().optional(),
     phone: Joi.string().min(3).max(30).optional(),
   });

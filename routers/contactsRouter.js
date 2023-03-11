@@ -18,8 +18,8 @@ router.get("/:contactId", asyncWrapper(getContactByIdController));
 
 router.post("/", addValidation, asyncWrapper(addContactController));
 
-router.delete("/:contactId", asyncWrapper(changeContactController));
+router.delete("/:contactId", asyncWrapper(deleteContactController));
 
-router.put("/:contactId", putValidation, asyncWrapper(deleteContactController));
+router.put("/:contactId", putValidation, asyncWrapper(changeContactController));
 
 module.exports = router;
