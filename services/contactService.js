@@ -39,10 +39,22 @@ const deleteContactById = async (id) => {
   await Contacts.findByIdAndRemove(id);
 };
 
+const updateStatusContact = async (id, { favorite }) => {
+  const contact = await Contacts.findById(id);
+  if (!contact) {
+    throw new WrongParametrError(
+      `Update Status imposibble - No contact with id ${id}`
+    );
+  }
+
+  await Contacts.findByIdAndUpdate(id, { $set: { favorite } });
+};
+
 module.exports = {
   getContacts,
   getContactById,
   addContact,
   changeContactById,
   deleteContactById,
+  updateStatusContact,
 };

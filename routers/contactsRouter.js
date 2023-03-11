@@ -10,6 +10,7 @@ const {
   addContactController,
   changeContactController,
   deleteContactController,
+  updateStatusContactController,
 } = require("../controllers/contactsController");
 
 router.get("/", asyncWrapper(getContactsController));
@@ -21,5 +22,7 @@ router.post("/", addValidation, asyncWrapper(addContactController));
 router.delete("/:contactId", asyncWrapper(deleteContactController));
 
 router.put("/:contactId", putValidation, asyncWrapper(changeContactController));
+
+router.patch("/:contactId", asyncWrapper(updateStatusContactController));
 
 module.exports = router;

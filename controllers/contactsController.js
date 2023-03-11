@@ -4,6 +4,7 @@ const {
   addContact,
   changeContactById,
   deleteContactById,
+  updateStatusContact,
 } = require("../services/contactService");
 
 const getContactsController = async (req, res) => {
@@ -37,10 +38,18 @@ const deleteContactController = async (req, res) => {
   res.json({ status: "contact deleted" });
 };
 
+const updateStatusContactController = async (req, res) => {
+  const { favorite } = req.body;
+  const id = req.params.contactId;
+  await updateStatusContact(id, { favorite });
+  res.json({ status: "contact changed type favorite" });
+};
+
 module.exports = {
   getContactsController,
   getContactByIdController,
   addContactController,
   changeContactController,
   deleteContactController,
+  updateStatusContactController,
 };
