@@ -1,46 +1,46 @@
 const {
-  getPost,
-  getPostById,
-  addPost,
-  changePostById,
-  deletePostById,
-} = require("../services/postService");
+  getContacts,
+  getContactById,
+  addContact,
+  changeContactById,
+  deleteContactById,
+} = require("../services/contactService");
 
-const getPostsController = async (req, res) => {
-  const posts = await getPost();
-  res.json({ posts });
+const getContactsController = async (req, res) => {
+  const contacts = await getContacts();
+  res.json({ contacts });
 };
 
-const getPostByIdController = async (req, res) => {
+const getContactByIdController = async (req, res) => {
   const id = req.params.id;
-  const post = await getPostById(id);
+  const post = await getContactById(id);
   res.json({ post, status: "success find" });
 };
 
-const addPostController = async (req, res) => {
+const addContactController = async (req, res) => {
   const { topic, text } = req.body;
-  await addPost({ topic, text });
+  await addContact({ topic, text });
   res.json({ status: "success add" });
 };
 
-const changePostController = async (req, res) => {
+const changeContactController = async (req, res) => {
   const { topic, text } = req.body;
   const id = req.params.id;
-  await changePostById(id, { topic, text });
+  await changeContactById(id, { topic, text });
 
   res.json({ status: "success change" });
 };
 
-const deletePostController = async (req, res) => {
+const deleteContactController = async (req, res) => {
   const id = req.params.id;
-  await deletePostById(id);
+  await deleteContactById(id);
   res.json({ status: "deleted" });
 };
 
 module.exports = {
-  getPostsController,
-  getPostByIdController,
-  addPostController,
-  changePostController,
-  deletePostController,
+  getContactsController,
+  getContactByIdController,
+  addContactController,
+  changeContactController,
+  deleteContactController,
 };
