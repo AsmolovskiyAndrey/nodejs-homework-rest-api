@@ -10,4 +10,10 @@ class WrongParametrError extends Error {
     this.status = 400;
   }
 }
-module.exports = { ValidationError, WrongParametrError };
+class AppError extends Error {
+  constructor(status, message) {
+    super(message);
+    this.status = status;
+  }
+}
+module.exports = { ValidationError, WrongParametrError, AppError };

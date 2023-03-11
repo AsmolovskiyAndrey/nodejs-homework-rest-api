@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 const { Contacts } = require("../db/contactModel");
 const { WrongParametrError } = require("../helpers/errors");
 

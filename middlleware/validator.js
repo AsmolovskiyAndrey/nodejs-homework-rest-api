@@ -1,4 +1,6 @@
 const Joi = require("joi");
+const { Contacts } = require("../db/contactModel");
+const { AppError } = require("../helpers/errors");
 
 const addValidation = (req, res, next) => {
   const schema = Joi.object({
@@ -30,4 +32,16 @@ const putValidation = (req, res, next) => {
   next();
 };
 
-module.exports = { addValidation, putValidation };
+const checkUserId = async (req, res, next) => {
+  const id = req.params.contactId;
+
+  try {
+    await Contacts.findById(id);
+  } catch (err) {
+    return next(new AppError(404, `User with id ${id} not found`));
+  }
+
+  next();
+};
+
+module.exports = { addValidation, putValidation, checkUserId };
