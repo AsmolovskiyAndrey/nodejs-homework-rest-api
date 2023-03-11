@@ -24,6 +24,12 @@ const addContact = async ({ name, email, phone }) => {
 };
 
 const updateContactById = async (id, { name, email, phone }) => {
+  const contact = await Contacts.findById(id);
+
+  if (!contact) {
+    throw new AppError(404, `Update imposibble - No contact with id ${id}`);
+  }
+
   await Contacts.findByIdAndUpdate(id, { $set: { name, email, phone } });
 };
 
