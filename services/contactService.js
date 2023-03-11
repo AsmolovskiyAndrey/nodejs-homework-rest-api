@@ -23,7 +23,7 @@ const addContact = async ({ name, email, phone }) => {
   await addContact.save();
 };
 
-const changeContactById = async (id, { name, email, phone }) => {
+const updateContactById = async (id, { name, email, phone }) => {
   await Contacts.findByIdAndUpdate(id, { $set: { name, email, phone } });
 };
 
@@ -51,7 +51,7 @@ module.exports = {
   getContacts,
   getContactById,
   addContact,
-  changeContactById,
+  updateContactById,
   deleteContactById,
   updateStatusContact,
 };

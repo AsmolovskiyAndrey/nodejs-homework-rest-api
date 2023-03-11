@@ -2,7 +2,7 @@ const {
   getContacts,
   getContactById,
   addContact,
-  changeContactById,
+  updateContactById,
   deleteContactById,
   updateStatusContact,
 } = require("../services/contactService");
@@ -24,10 +24,10 @@ const addContactController = async (req, res) => {
   res.json({ status: "contact added" });
 };
 
-const changeContactController = async (req, res) => {
+const updateContactController = async (req, res) => {
   const { name, email, phone } = req.body;
   const id = req.params.contactId;
-  await changeContactById(id, { name, email, phone });
+  await updateContactById(id, { name, email, phone });
 
   res.json({ status: "contact changed" });
 };
@@ -49,7 +49,7 @@ module.exports = {
   getContactsController,
   getContactByIdController,
   addContactController,
-  changeContactController,
+  updateContactController,
   deleteContactController,
   updateStatusContactController,
 };
