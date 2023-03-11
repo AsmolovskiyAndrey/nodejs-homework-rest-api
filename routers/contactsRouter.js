@@ -2,11 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const { asyncWrapper } = require("../helpers/apiHelpers");
-const {
-  addValidation,
-  putValidation,
-  checkUserId,
-} = require("../middlleware/validator");
+const { addValidation, putValidation } = require("../middlleware/validator");
 
 const {
   getContactsController,
@@ -17,7 +13,7 @@ const {
   updateStatusContactController,
 } = require("../controllers/contactsController");
 
-router.use("/:contactId", checkUserId); //! ID проверка по всем запросам с contactId
+// router.use("/:contactId", checkUserId); //! ID проверка по всем запросам с contactId
 
 router.get("/", asyncWrapper(getContactsController));
 
