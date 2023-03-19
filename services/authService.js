@@ -39,6 +39,15 @@ const login = async (email, password) => {
   return responseUser;
 };
 
+const logoutContact = async (owner) => {
+  const user = await User.findOne({ _id: owner });
+
+  if (!owner || !user) {
+    throw new AppError(401, "Not authorized");
+  }
+  await User.findOneAndUpdate({ _id: owner }, { $set: { token: null } });
+};
+
 const updateSubscriptionContact = async (owner, { subscription }) => {
   const user = await User.findOne({ _id: owner });
   if (!owner || !user) {
@@ -58,4 +67,5 @@ module.exports = {
   registrer,
   login,
   updateSubscriptionContact,
+  logoutContact,
 };
