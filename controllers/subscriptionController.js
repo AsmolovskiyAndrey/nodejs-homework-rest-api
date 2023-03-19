@@ -1,6 +1,7 @@
 const {
   updateSubscriptionContact,
   logoutContact,
+  currentContact,
 } = require("../services/authService");
 
 const subscriptionController = async (req, res) => {
@@ -10,10 +11,23 @@ const subscriptionController = async (req, res) => {
   await updateSubscriptionContact(owner, { subscription });
   res.json({ status: "contact changed subscription" });
 };
+
 const logoutController = async (req, res) => {
   const owner = req.user._id;
   await logoutContact(owner);
-  res.status(204);
+
+  res.status(204).json({ message: "Token deleted" });
 };
 
-module.exports = { subscriptionController, logoutController };
+const currentController = async (req, res) => {
+  const owner = req.user._id;
+  const currentUser = await currentContact(owner);
+
+  res.json({ currentUser });
+};
+
+module.exports = {
+  subscriptionController,
+  logoutController,
+  currentController,
+};

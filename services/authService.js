@@ -39,6 +39,17 @@ const login = async (email, password) => {
   return responseUser;
 };
 
+const currentContact = async (owner) => {
+  try {
+    const user = await User.findOne({ _id: owner }).select(
+      "-_id -__v -password -token"
+    );
+    return user;
+  } catch (error) {
+    throw new AppError(401, "Not authorized");
+  }
+};
+
 const logoutContact = async (owner) => {
   const user = await User.findOne({ _id: owner });
 
@@ -68,4 +79,5 @@ module.exports = {
   login,
   updateSubscriptionContact,
   logoutContact,
+  currentContact,
 };

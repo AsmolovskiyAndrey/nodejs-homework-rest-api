@@ -12,12 +12,14 @@ const {
 const {
   subscriptionController,
   logoutController,
+  currentController,
 } = require("../controllers/subscriptionController");
 
 // ! Создали роуты логина и регистрации для обработки в основном модуле
 router.post("/register", createUserValidator, asyncWrapper(registerController));
 router.post("/login", asyncWrapper(loginController));
 router.post("/logout", authMiddleware, asyncWrapper(logoutController));
+router.post("/current", authMiddleware, asyncWrapper(currentController));
 router.patch("/", authMiddleware, asyncWrapper(subscriptionController));
 
 module.exports = { authRouter: router };
