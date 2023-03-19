@@ -20,19 +20,21 @@ const registrer = async (email, password) => {
 
 const login = async (email, password) => {
   const user = await User.findOne({ email });
-  if (!user) {
-    throw new AppError(`No user with email: ${email} found`);
-  }
 
-  if (!(await bcrypt.compare(password, user.password))) {
-    throw new AppError(`Wrong password...`);
+  if (!user || !(await bcrypt.compare(password, user.password))) {
+    throw new AppError(401, `Email or password is wrong`);
   }
 
   const token = jwt.sign(
-    { _id: user._id, createdAt: user.createdAt },
+    { _id: user._id, subscription: user.subscription },
     process.env.JWT_SECRET
   );
-  return token;
+  await User.findByIdAndUpdate(user._id, { $set: { token } });
+
+  const responseUser = await User.findOne({ email }).select(
+    "-_id -__v -password"
+  );
+  return responseUser;
 };
 
 module.exports = {
