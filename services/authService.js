@@ -23,9 +23,13 @@ const registrer = async (email, password) => {
 
 const login = async (email, password) => {
   const user = await User.findOne({ email });
+  if (!user) {
+    throw new AppError(401, `Email is wrong`);
+  }
 
-  if (!user || !(await bcrypt.compare(password, user.password))) {
-    throw new AppError(401, `Email or password is wrong`);
+  const compareUser = await bcrypt.compare(password, user.password);
+  if (!compareUser) {
+    throw new AppError(401, `Password is wrong`);
   }
 
   const token = jwt.sign(
