@@ -2,7 +2,9 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const { User } = require("../db/userModel");
+// const { Contacts } = require("../db/contactModel");
 const { AppError } = require("../helpers/errors");
+const allSubscription = ["starter", "pro", "business"];
 
 const registrer = async (email, password) => {
   const findUser = await User.findOne({ email });
@@ -37,7 +39,23 @@ const login = async (email, password) => {
   return responseUser;
 };
 
+const updateSubscriptionContact = async (owner, { subscription }) => {
+  const user = await User.findOne({ _id: owner });
+  if (!owner || !user) {
+    throw new AppError(400, `Update Subscription imposibble - No user`);
+  }
+
+  if (!allSubscription.includes(subscription)) {
+    throw new AppError(
+      400,
+      `Update Subscription imposibble - No "starter", "pro", "business"`
+    );
+  }
+  await User.findOneAndUpdate(owner, { $set: { subscription } });
+};
+
 module.exports = {
   registrer,
   login,
+  updateSubscriptionContact,
 };
