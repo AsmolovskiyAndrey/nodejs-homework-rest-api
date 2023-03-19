@@ -3,12 +3,21 @@ const { AppError } = require("../helpers/errors");
 
 const getContacts = async (owner, { skip, limit }, favorite) => {
   try {
-    const contacts = await Contacts.find({ favorite: favorite, owner })
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit)
-      .select("-__v");
-    return contacts;
+    if (favorite) {
+      const contacts = await Contacts.find({ favorite: favorite, owner })
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .select("-__v");
+      return contacts;
+    } else {
+      const contacts = await Contacts.find({ owner })
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .select("-__v");
+      return contacts;
+    }
   } catch (error) {
     throw new AppError(404, "This user has no saved contacts yet...");
   }
