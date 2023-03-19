@@ -2,9 +2,9 @@ const { registrer, login } = require("../services/authService");
 
 const registerController = async (req, res) => {
   const { email, password } = req.body;
-  await registrer(email, password);
+  const newUser = await registrer(email, password);
 
-  res.json({ status: "registration ok" });
+  res.status(201).json({ user: newUser });
 };
 
 const loginController = async (req, res) => {
