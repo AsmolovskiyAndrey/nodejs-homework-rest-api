@@ -9,8 +9,8 @@ const {
 
 const getContactsController = async (req, res) => {
   const owner = req.user._id;
-  let { page = 1, limit = 20, favorite = false } = req.query;
-  limit = +limit > 100 ? 100 : +limit; //* ограничения не больше 10ти (если пришло больше) и к числу
+  const { page = 1, limit = 20, favorite } = req.query;
+  // limit = +limit > 100 ? 100 : +limit; //* ограничения не больше 10ти (если пришло больше) и к числу
   const skip = (+page - 1) * +limit;
 
   const contacts = await getContacts(owner, { skip, limit }, favorite);

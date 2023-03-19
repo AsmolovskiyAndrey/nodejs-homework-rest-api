@@ -1,4 +1,5 @@
 const Joi = require("joi");
+const { ValidationError } = require("../helpers/errors");
 
 const PASSWD_REGEX =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\\$%\\^&\\*])(?=.{8,128})/;
@@ -13,7 +14,8 @@ const addValidation = (req, res, next) => {
 
   const validationResult = schema.validate(req.body);
   if (validationResult.error) {
-    return res.status(400).json({ status: validationResult.error.details });
+    next(new ValidationError(validationResult.error.details[0].message));
+    // return res.status(400).json({ status: validationResult.error.details });
   }
   next();
 };
@@ -28,7 +30,8 @@ const putValidation = (req, res, next) => {
 
   const validationResult = schema.validate(req.body);
   if (validationResult.error) {
-    return res.status(400).json({ status: validationResult.error.details });
+    next(new ValidationError(validationResult.error.details[0].message));
+    // return res.status(400).json({ status: validationResult.error.details });
   }
   next();
 };
@@ -41,7 +44,8 @@ const createUserValidator = (req, res, next) => {
 
   const validationResult = schema.validate(req.body);
   if (validationResult.error) {
-    return res.status(400).json({ status: validationResult.error.details });
+    next(new ValidationError(validationResult.error.details[0].message));
+    // return res.status(400).json({ status: validationResult.error.details });
   }
   next();
 };

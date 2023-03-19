@@ -14,6 +14,7 @@ const registrer = async (email, password) => {
 
   const user = new User({ email, password });
   await user.save(); //! Хук сделает сам ХЭШ пароля при save (user Model)
+
   const responseUser = await User.findOne({ email }).select(
     "-_id -__v -token -password"
   );

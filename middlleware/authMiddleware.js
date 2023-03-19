@@ -13,7 +13,7 @@ const authMiddleware = (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
-    throw new AppError(405, "Invalid token");
+    throw new AppError(401, "Invalid token");
   }
 };
 
