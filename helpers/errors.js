@@ -4,4 +4,11 @@ class AppError extends Error {
     this.status = status;
   }
 }
-module.exports = { AppError };
+
+class ValidationError extends Error {
+  constructor(message) {
+    super(message);
+    this.status = 400;
+  }
+}
+module.exports = { AppError, ValidationError };

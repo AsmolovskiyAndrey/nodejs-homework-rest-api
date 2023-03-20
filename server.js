@@ -4,6 +4,7 @@ const cors = require("cors");
 require("dotenv").config();
 
 const contactsRouter = require("./routers/contactsRouter");
+const { authRouter } = require("./routers/authRouter");
 const { connectMongo } = require("./db/connections");
 const { errorHandler } = require("./helpers/apiHelpers");
 const PORT = process.env.PORT || 8083;
@@ -17,6 +18,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/contacts", contactsRouter);
+app.use("/api/users", authRouter);
 
 app.use(errorHandler); //! Обработка ошибок
 
