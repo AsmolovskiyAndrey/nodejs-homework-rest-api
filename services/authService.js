@@ -1,5 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const gravatar = require("gravatar");
+// const Jimp = require("jimp");
 
 const { User } = require("../db/userModel");
 // const { Contacts } = require("../db/contactModel");
@@ -12,7 +14,8 @@ const registrer = async (email, password) => {
     throw new AppError(409, `This ${email} in use`);
   }
 
-  const user = new User({ email, password });
+  const avatarURL = await gravatar.url(email);
+  const user = new User({ email, password, avatarURL });
   await user.save(); //! Хук сделает сам ХЭШ пароля при save (user Model)
 
   const responseUser = await User.findOne({ email }).select(
