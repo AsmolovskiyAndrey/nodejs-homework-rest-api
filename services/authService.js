@@ -6,7 +6,6 @@ const path = require("path");
 const fs = require("fs").promises;
 
 const { User } = require("../db/userModel");
-// const { Contacts } = require("../db/contactModel");
 const { AppError } = require("../helpers/errors");
 const allSubscription = ["starter", "pro", "business"];
 

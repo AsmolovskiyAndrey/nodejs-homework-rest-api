@@ -2,7 +2,6 @@ const multer = require("multer");
 const path = require("path");
 
 const FILE_PATH = path.resolve("../nodejs-homework-rest-api/tmp");
-// console.log(FILE_PATH);
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
