@@ -1,7 +1,9 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const gravatar = require("gravatar");
-// const Jimp = require("jimp");
+const Jimp = require("jimp");
+const path = require("path");
+const fs = require("fs").promises;
 
 const { User } = require("../db/userModel");
 // const { Contacts } = require("../db/contactModel");
@@ -82,10 +84,33 @@ const updateSubscriptionContact = async (owner, { subscription }) => {
   await User.findOneAndUpdate(owner, { $set: { subscription } });
 };
 
+const avatarChange = async (originalname, userId) => {
+  const uploadedAvatarPath = path.resolve(`./tmp/${originalname}`);
+  const avatarName = userId + "-" + originalname;
+  const user = await User.findById(userId);
+  if (!user) throw new AppError(401, "Not authorized");
+
+  await User.findOneAndUpdate(
+    { _id: userId },
+    { $set: { avatarURL: `./avatars/${avatarName}` } }
+  );
+
+  Jimp.read(uploadedAvatarPath, (err, picture) => {
+    if (err) throw err;
+    picture
+      .resize(250, 250)
+      .write(path.resolve(`./public/avatars/${avatarName}`));
+  });
+
+  fs.unlink(uploadedAvatarPath);
+  return `/api/avatars/${avatarName}`;
+};
+
 module.exports = {
   registrer,
   login,
   updateSubscriptionContact,
   logoutContact,
   currentContact,
+  avatarChange,
 };
