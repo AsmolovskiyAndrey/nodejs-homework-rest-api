@@ -1,8 +1,11 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const gravatar = require("gravatar");
+const Jimp = require("jimp");
+const path = require("path");
+const fs = require("fs").promises;
 
 const { User } = require("../db/userModel");
-// const { Contacts } = require("../db/contactModel");
 const { AppError } = require("../helpers/errors");
 const allSubscription = ["starter", "pro", "business"];
 
@@ -12,7 +15,8 @@ const registrer = async (email, password) => {
     throw new AppError(409, `This ${email} in use`);
   }
 
-  const user = new User({ email, password });
+  const avatarURL = await gravatar.url(email);
+  const user = new User({ email, password, avatarURL });
   await user.save(); //! Хук сделает сам ХЭШ пароля при save (user Model)
 
   const responseUser = await User.findOne({ email }).select(
@@ -79,10 +83,33 @@ const updateSubscriptionContact = async (owner, { subscription }) => {
   await User.findOneAndUpdate(owner, { $set: { subscription } });
 };
 
+const avatarChange = async (originalname, userId) => {
+  const uploadedAvatarPath = path.resolve(`./tmp/${originalname}`);
+  const avatarName = userId + "-" + originalname;
+  const user = await User.findById(userId);
+  if (!user) throw new AppError(401, "Not authorized");
+
+  await User.findOneAndUpdate(
+    { _id: userId },
+    { $set: { avatarURL: `./avatars/${avatarName}` } }
+  );
+
+  Jimp.read(uploadedAvatarPath, (err, picture) => {
+    if (err) throw err;
+    picture
+      .resize(250, 250)
+      .write(path.resolve(`./public/avatars/${avatarName}`));
+  });
+
+  fs.unlink(uploadedAvatarPath);
+  return `/api/avatars/${avatarName}`;
+};
+
 module.exports = {
   registrer,
   login,
   updateSubscriptionContact,
   logoutContact,
   currentContact,
+  avatarChange,
 };

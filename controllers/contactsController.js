@@ -6,6 +6,7 @@ const {
   deleteContactById,
   updateStatusContact,
 } = require("../services/contactService");
+const { avatarChange } = require("../services/authService");
 
 const getContactsController = async (req, res) => {
   const owner = req.user._id;
@@ -54,6 +55,12 @@ const updateStatusContactController = async (req, res) => {
   res.json({ status: "contact changed type favorite" });
 };
 
+const avatarChangeController = async (req, res) => {
+  const { originalname } = req.file;
+  const avatarPath = await avatarChange(originalname, req.user._id);
+  res.json({ avatarURL: avatarPath });
+};
+
 module.exports = {
   getContactsController,
   getContactByIdController,
@@ -61,4 +68,5 @@ module.exports = {
   updateContactController,
   deleteContactController,
   updateStatusContactController,
+  avatarChangeController,
 };
