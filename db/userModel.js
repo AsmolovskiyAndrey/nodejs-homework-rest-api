@@ -37,7 +37,7 @@ const userSchema = new Schema({
 
 //! Хук сделает сам ХЭШ пароля при save (authService)
 userSchema.pre("save", async function () {
-  //* только если пароль новый или смена пароля
+  //* только если пароль новый
   if (this.isNew) {
     this.password = await bcrypt.hash(this.password, 10);
   }
