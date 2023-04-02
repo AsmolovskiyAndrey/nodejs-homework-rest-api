@@ -10,6 +10,7 @@ const {
   registerController,
   loginController,
   verificationController,
+  reVerificationByEmailController,
 } = require("../controllers/authController");
 const {
   subscriptionController,
@@ -34,5 +35,6 @@ router.get(
   "/auth/verify/:verificationToken",
   asyncWrapper(verificationController)
 );
+router.post("/verify", asyncWrapper(reVerificationByEmailController));
 
 module.exports = { authRouter: router };

@@ -1,4 +1,9 @@
-const { registrer, login, verification } = require("../services/authService");
+const {
+  registrer,
+  login,
+  verification,
+  reVerificationByEmail,
+} = require("../services/authService");
 
 const registerController = async (req, res) => {
   const { email, password } = req.body;
@@ -20,8 +25,15 @@ const verificationController = async (req, res) => {
   res.status(200).json({ message: "Verification successful" });
 };
 
+const reVerificationByEmailController = async (req, res) => {
+  const { email } = req.body;
+  await reVerificationByEmail(email);
+  res.status(200).json({ message: "Resending email for verification" });
+};
+
 module.exports = {
   registerController,
   loginController,
   verificationController,
+  reVerificationByEmailController,
 };

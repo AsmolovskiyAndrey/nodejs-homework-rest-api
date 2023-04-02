@@ -41,6 +41,30 @@ const registrer = async (email, password) => {
   return responseUser;
 };
 
+const reVerificationByEmail = async (email) => {
+  if (!email) {
+    throw new AppError(400, "missing required field email");
+  }
+  const emailVerificationUser = await User.findOne({ email });
+
+  if (!emailVerificationUser) {
+    throw new AppError(404, `User ${email} not found `);
+  }
+
+  if (emailVerificationUser.verify === true) {
+    throw new AppError(400, "Verification has already been passed");
+  }
+
+  const msgRegistarationRepeat = {
+    to: emailVerificationUser.email,
+    from: "asmolovskiy0202@gmail.com",
+    subject: "Re-verification by mail",
+    text: `Please, confirm your email address GET - http://localhost:8083/api/users/auth/verify/${emailVerificationUser.verificationToken}`,
+    html: `<h1>Please, <a href="http://localhost:8083/api/users/auth/verify/${emailVerificationUser.verificationToken}">confirm</a> your email address</h1>`,
+  };
+  await sgMail.send(msgRegistarationRepeat);
+};
+
 const verification = async (verificationToken) => {
   const verificationUser = await User.findOne({
     verificationToken,
@@ -70,7 +94,7 @@ const login = async (email, password) => {
     throw new AppError(401, `Email is wrong`);
   }
   if (user.verify === false) {
-    throw new AppError(400, `Verification Failed or has already been passed`);
+    throw new AppError(400, `Verification Failed`);
   }
 
   const compareUser = await bcrypt.compare(password, user.password);
@@ -151,6 +175,7 @@ const avatarChange = async (originalname, userId) => {
 module.exports = {
   registrer,
   verification,
+  reVerificationByEmail,
   login,
   updateSubscriptionContact,
   logoutContact,
