@@ -25,11 +25,19 @@ const userSchema = new Schema({
     type: String,
     default: "avatar.jpg",
   },
+  verify: {
+    type: Boolean,
+    default: false,
+  },
+  verificationToken: {
+    type: String,
+    required: [true, "Verify token is required"],
+  },
 });
 
 //! Хук сделает сам ХЭШ пароля при save (authService)
 userSchema.pre("save", async function () {
-  //* только если пароль новый
+  //* только если пароль новый или смена пароля
   if (this.isNew) {
     this.password = await bcrypt.hash(this.password, 10);
   }

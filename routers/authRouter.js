@@ -9,6 +9,7 @@ const { uploadMiddleware } = require("../middlleware/uploadMiddleware");
 const {
   registerController,
   loginController,
+  verificationController,
 } = require("../controllers/authController");
 const {
   subscriptionController,
@@ -28,6 +29,10 @@ router.patch(
   authMiddleware,
   uploadMiddleware.single("avatar"),
   asyncWrapper(avatarChangeController)
+);
+router.get(
+  "/auth/verify/:verificationToken",
+  asyncWrapper(verificationController)
 );
 
 module.exports = { authRouter: router };
