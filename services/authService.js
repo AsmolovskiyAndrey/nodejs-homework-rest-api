@@ -4,6 +4,10 @@ const gravatar = require("gravatar");
 const Jimp = require("jimp");
 const path = require("path");
 const fs = require("fs").promises;
+const sgMail = require("@sendgrid/mail");
+const uniqid = require("uniqid");
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const { User } = require("../db/userModel");
 const { AppError } = require("../helpers/errors");
@@ -16,13 +20,72 @@ const registrer = async (email, password) => {
   }
 
   const avatarURL = await gravatar.url(email);
-  const user = new User({ email, password, avatarURL });
+  const verificationToken = uniqid(`${email}-`);
+
+  const user = new User({ email, password, verificationToken, avatarURL });
   await user.save(); //! Хук сделает сам ХЭШ пароля при save (user Model)
 
   const responseUser = await User.findOne({ email }).select(
     "-_id -__v -token -password"
   );
+
+  const msg = {
+    to: email,
+    from: "asmolovskiy0202@gmail.com",
+    subject: "Completion of registration",
+    text: `Please, confirm your email address GET - http://localhost:8083/api/users/auth/verify/${verificationToken}`,
+    html: `<h1>Please, <a href="http://localhost:8083/api/users/auth/verify/${verificationToken}">confirm</a> your email address</h1>`,
+  };
+  await sgMail.send(msg);
+
   return responseUser;
+};
+
+const reVerificationByEmail = async (email) => {
+  if (!email) {
+    throw new AppError(400, "missing required field email");
+  }
+  const emailVerificationUser = await User.findOne({ email });
+
+  if (!emailVerificationUser) {
+    throw new AppError(404, `User ${email} not found `);
+  }
+
+  if (emailVerificationUser.verify === true) {
+    throw new AppError(400, "Verification has already been passed");
+  }
+
+  const msgRegistarationRepeat = {
+    to: emailVerificationUser.email,
+    from: "asmolovskiy0202@gmail.com",
+    subject: "Re-verification by mail",
+    text: `Please, confirm your email address GET - http://localhost:8083/api/users/auth/verify/${emailVerificationUser.verificationToken}`,
+    html: `<h1>Please, <a href="http://localhost:8083/api/users/auth/verify/${emailVerificationUser.verificationToken}">confirm</a> your email address</h1>`,
+  };
+  await sgMail.send(msgRegistarationRepeat);
+};
+
+const verification = async (verificationToken) => {
+  const verificationUser = await User.findOne({
+    verificationToken,
+    verify: false,
+  });
+  if (!verificationUser) {
+    throw new AppError(404, `User not found`);
+  }
+  verificationUser.verificationToken = "null";
+  verificationUser.verify = true;
+
+  await verificationUser.save();
+
+  const msgRegistarationOk = {
+    to: verificationUser.email,
+    from: "asmolovskiy0202@gmail.com",
+    subject: "Thank you for registration",
+    text: `Registration completed successfully. !!!`,
+    html: `<h1>Registration completed successfully. !!!</h1>`,
+  };
+  await sgMail.send(msgRegistarationOk);
 };
 
 const login = async (email, password) => {
@@ -30,8 +93,12 @@ const login = async (email, password) => {
   if (!user) {
     throw new AppError(401, `Email is wrong`);
   }
+  if (user.verify === false) {
+    throw new AppError(400, `Verification Failed`);
+  }
 
   const compareUser = await bcrypt.compare(password, user.password);
+  console.log(compareUser);
   if (!compareUser) {
     throw new AppError(401, `Password is wrong`);
   }
@@ -107,6 +174,8 @@ const avatarChange = async (originalname, userId) => {
 
 module.exports = {
   registrer,
+  verification,
+  reVerificationByEmail,
   login,
   updateSubscriptionContact,
   logoutContact,

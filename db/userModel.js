@@ -25,6 +25,14 @@ const userSchema = new Schema({
     type: String,
     default: "avatar.jpg",
   },
+  verify: {
+    type: Boolean,
+    default: false,
+  },
+  verificationToken: {
+    type: String,
+    required: [true, "Verify token is required"],
+  },
 });
 
 //! Хук сделает сам ХЭШ пароля при save (authService)
